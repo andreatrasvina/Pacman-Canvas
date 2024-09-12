@@ -2,9 +2,12 @@ import { Player } from './player.js';
 import { Food } from './food.js';
 import { Wall } from './wall.js';
 import { Ghost } from './ghost.js';
+import { map } from './map.js';
 
 const canvas = document.getElementById("my_canvas");
 const ctx = canvas.getContext('2d');
+
+const tileSize = 32; 
 
 let direction = "";
 let score = 0;
@@ -14,10 +17,10 @@ let pause = false;
 let player = new Player(250, 250, 40, 40, 'assets/images/esponga.png');
 let food = new Food(300,300,40, 40, 'assets/images/plato.png');
 
-let walls = [
-    new Wall(80, 350, 320, 40, 'pink'),
-    new Wall(80, 100, 320, 40, 'pink')
-];
+// let walls = [
+//     new Wall(80, 350, 320, 40, 'pink'),
+//     new Wall(80, 100, 320, 40, 'pink')
+// ];
 
 let ghosts = [
     new Ghost(100, 100, 40, 40, 'green'),
@@ -50,30 +53,47 @@ function update() {
     if (!pause) {
         player.move(direction, speed, canvas);
         
-        ghosts.forEach(ghost => {
-            ghost.move();
+        // ghosts.forEach(ghost => {
+        //     ghost.move();
             
-        });
+        // });
 
     }
 }
 
+//pared
+function drawMap() {
+    for (let row = 0; row < map.length; row++) {
+        for (let col = 0; col < map[row].length; col++) {
+            const tile = map[row][col];
+            if (tile === 1) {
+                ctx.fillStyle = 'blue';
+                ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
+            }
+        }
+    }
+}
+
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    
     player.draw(ctx);
     food.draw(ctx);
+    
+    drawMap();
+    // walls.forEach(wall => {
+    //     wall.draw(ctx);
+    //   });
 
-    walls.forEach(wall => {
-        wall.draw(ctx);
-      });
+    // ghosts.forEach(ghost => {
 
-    ghosts.forEach(ghost => {
-
-        ghost.draw(ctx);
-    });
+    //     ghost.draw(ctx);
+    // });
 
 }
+
 
 function gameLoop() {
     update();
