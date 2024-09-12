@@ -1,5 +1,6 @@
 import { Player } from './player.js';
 import { Food } from './food.js';
+import { Wall } from './wall.js';
 
 const canvas = document.getElementById("my_canvas");
 const ctx = canvas.getContext('2d');
@@ -11,6 +12,13 @@ let pause = false;
 
 let player = new Player(250, 250, 40, 40, 'assets/images/esponga.png');
 let food = new Food(300,300,40, 40, 'assets/images/plato.png');
+
+let walls = [
+    new Wall(80, 350, 320, 40, 'pink'),
+    new Wall(80, 100, 320, 40, 'pink')
+];
+
+
 
 document.addEventListener('keydown', function(e) {
     switch(e.keyCode) {
@@ -44,6 +52,10 @@ function draw() {
     
     player.draw(ctx);
     food.draw(ctx);
+
+    walls.forEach(wall => {
+        wall.draw(ctx);
+      });
 }
 
 function gameLoop() {
