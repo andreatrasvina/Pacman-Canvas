@@ -32,6 +32,8 @@ class Player {
     draw(ctx) {
         ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
     }
+
+    
 }
 
 export { Player };

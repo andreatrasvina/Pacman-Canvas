@@ -1,6 +1,7 @@
 import { Player } from './player.js';
 import { Food } from './food.js';
 import { Wall } from './wall.js';
+import { Ghost } from './ghost.js';
 
 const canvas = document.getElementById("my_canvas");
 const ctx = canvas.getContext('2d');
@@ -16,6 +17,11 @@ let food = new Food(300,300,40, 40, 'assets/images/plato.png');
 let walls = [
     new Wall(80, 350, 320, 40, 'pink'),
     new Wall(80, 100, 320, 40, 'pink')
+];
+
+let ghosts = [
+    new Ghost(100, 100, 40, 40, 'green'),
+    new Ghost(400, 400, 40, 40, 'yellow')
 ];
 
 
@@ -44,6 +50,11 @@ function update() {
     if (!pause) {
         player.move(direction, speed, canvas);
         
+        ghosts.forEach(ghost => {
+            ghost.move();
+            
+        });
+
     }
 }
 
@@ -56,6 +67,12 @@ function draw() {
     walls.forEach(wall => {
         wall.draw(ctx);
       });
+
+    ghosts.forEach(ghost => {
+
+        ghost.draw(ctx);
+    });
+
 }
 
 function gameLoop() {
