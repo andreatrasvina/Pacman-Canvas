@@ -61,6 +61,10 @@ function create() {
                 //comida
                 foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/plato.png'));
             }
+            else if (tile === 3) {
+                //pastilla
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/plato.png', true));
+            }
         }
     }
 }
@@ -100,12 +104,18 @@ function update() {
 
                 foods.splice(index, 1); 
 
+                if (food.isPill) {
+                    food.effect(player);
+                }
+
                 if (totalFoods === 0) {
                     console.log("ya ganastes");
                     //aqui pondre algo para finalizar el juego
                 }
 
             }
+
+            
         });
 
         
