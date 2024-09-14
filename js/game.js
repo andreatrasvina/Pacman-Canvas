@@ -89,9 +89,10 @@ function update() {
             }
         });
 
-        foods.forEach(food => {
+        foods.forEach((food, index) => {
             if (player.colision(food)) {
-                console.log('el pepe')
+
+                foods.splice(index, 1); 
             }
         });
 
