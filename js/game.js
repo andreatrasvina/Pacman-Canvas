@@ -88,6 +88,15 @@ function update() {
                 }
             }
         });
+
+        foods.forEach(food => {
+            if (player.colision(food)) {
+                console.log('el pepe')
+            }
+        });
+
+        
+
         
         // ghosts.forEach(ghost => {
         //     ghost.move();
@@ -106,11 +115,7 @@ function draw() {
     walls.forEach(wall => wall.draw(ctx));
     
     foods.forEach(food => food.draw(ctx));
-
     
-    //food.draw(ctx);
-    
-    //drawMap();
     // walls.forEach(wall => {
     //     wall.draw(ctx);
     //   });
