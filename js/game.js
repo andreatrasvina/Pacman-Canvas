@@ -14,6 +14,7 @@ let score = 0;
 let speed = 1;
 let pause = false;
 
+
 let player = new Player(250, 250, 32, 32, 'assets/images/esponga.png');
 
 let walls = [];
@@ -90,9 +91,20 @@ function update() {
         });
 
         foods.forEach((food, index) => {
+            let totalFoods = foods.length; 
+
             if (player.colision(food)) {
 
+                score++;
+                totalFoods--; 
+
                 foods.splice(index, 1); 
+
+                if (totalFoods === 0) {
+                    console.log("ya ganastes");
+                    //aqui pondre algo para finalizar el juego
+                }
+
             }
         });
 
