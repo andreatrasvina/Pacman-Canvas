@@ -29,6 +29,13 @@ class Player {
         }
     }
 
+    colision(otro) {
+        return this.x < otro.x + otro.w &&
+               this.x + this.w > otro.x &&
+               this.y < otro.y + otro.h &&
+               this.y + this.h > otro.y;
+    }
+
     draw(ctx) {
         ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
     }

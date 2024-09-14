@@ -12,10 +12,18 @@ class Ghost {
         this.y += Math.random() > 0.5 ? 2 : -2;
     }
 
+    colision(otro) {
+        return this.x < otro.x + otro.w &&
+               this.x + this.w > otro.x &&
+               this.y < otro.y + otro.h &&
+               this.y + this.h > otro.y;
+    }
+
     draw(ctx) {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.w, this.h);
     }
+
 }
 
 export { Ghost };

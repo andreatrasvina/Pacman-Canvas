@@ -11,7 +11,7 @@ const tileSize = 32;
 
 let direction = "";
 let score = 0;
-let speed = 5;
+let speed = 1;
 let pause = false;
 
 let player = new Player(250, 250, 32, 32, 'assets/images/esponga.png');
@@ -69,6 +69,12 @@ create();
 function update() {
     if (!pause) {
         player.move(direction, speed, canvas);
+
+        walls.forEach(wall => {
+            if (player.colision(wall)) {
+                console.log("el pepe")
+            }
+        });
         
         // ghosts.forEach(ghost => {
         //     ghost.move();
