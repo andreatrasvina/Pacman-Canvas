@@ -72,7 +72,20 @@ function update() {
 
         walls.forEach(wall => {
             if (player.colision(wall)) {
-                console.log("el pepe")
+                switch(direction) {
+                    case "left":
+                        player.x += speed;
+                        break;
+                    case "up":
+                        player.y += speed;
+                        break;
+                    case "right":
+                        player.x -= speed;
+                        break;
+                    case "down":
+                        player.y -= speed;
+                        break;
+                }
             }
         });
         
