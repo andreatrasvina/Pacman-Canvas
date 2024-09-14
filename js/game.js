@@ -138,6 +138,16 @@ function draw() {
     //     ghost.draw(ctx);
     // });
 
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("Score: " + score, 20, 20);
+
+    if (pause) {
+        ctx.fillStyle = "white";
+        ctx.font = "40px Arial";
+        ctx.fillText("PAUSE", canvas.width / 2 - 60, canvas.height / 2);
+    }
+
 }
 
 
