@@ -4,6 +4,8 @@ import { Wall } from './wall.js';
 import { Ghost } from './ghost.js';
 import { map } from './map.js';
 
+let gameState = "start";
+
 const canvas = document.getElementById("my_canvas");
 const ctx = canvas.getContext('2d');
 
@@ -23,7 +25,7 @@ let countdown = 0;
 let restarting = false;
 
 
-let player = new Player(32, 64, 32, 32, 'assets/images/player4.png');
+let player = new Player(32, 64, 32, 32, 'assets/images/puckman.png');
 
 let walls = [];
 let foods = [];
@@ -34,8 +36,6 @@ let ghosts = [
     new Ghost(1000, 610, 32, 32, 'assets/images/aheno.png', "Aheno"),
     new Ghost(1000, 64, 32, 32, 'assets/images/firebrand.png', "Firebrand")
 ];
-
-
 
 document.addEventListener('keydown', function(e) {
     switch(e.keyCode) {
@@ -71,7 +71,7 @@ function create() {
             
             //comida
             } else if (tile === 2 ) {
-                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/01.png'));
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/comida.png'));
             }
 
             //pastilla
@@ -131,12 +131,8 @@ function update() {
                     console.log("ya ganastes");
                     pause = true; // Pausar el juego al ganar
                     
-                
                 }
-
             }
-
-            
         });
 
         ghosts.forEach(ghost => {
@@ -147,14 +143,12 @@ function update() {
                 console.log(`Vidas restantes: ${player.lives}`);
 
                 if (player.lives > 0) {
-                    resetGame(); 
+                    resetGame();
                 } else {
-                    console.log("Game Over");
-                    // Lógica para terminar el juego
+                    gameState = "gameOver";
                 }
             }
         });
-
     }
 }
 
@@ -189,6 +183,39 @@ function drawLight() {
     ctx.globalCompositeOperation = 'source-over'; 
 }
 
+function drawStartScreen() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.font = "40px Arial";
+    ctx.fillText("PACMAN'S NEXTBOTS", 380, canvas.height / 2 - 50);
+    ctx.font = "20px Arial";
+    ctx.fillText("Press ENTER to start", canvas.width / 2 - 90, canvas.height / 2);
+}
+
+document.addEventListener('keydown', function(e) {
+    if (gameState === "start" && e.keyCode === 13) { //ENTER
+        gameState = "playing";
+        resetGame(); 
+    }
+});
+
+function drawGameOverScreen() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "red";
+    ctx.font = "40px Arial";
+    ctx.fillText("GAME OVER", canvas.width / 2 - 100, canvas.height / 2 - 50);
+    ctx.font = "20px Arial";
+    ctx.fillText("Press R to restart", canvas.width / 2 - 90, canvas.height / 2);
+}
+
+document.addEventListener('keydown', function(e) {
+    if (gameState === "gameOver" && e.keyCode === 82) { //R
+        gameState = "playing";
+        player.lives = 3;
+        resetGame();
+    }
+});
+
 function resetGame() {
     pause = true;
     restarting = true;
@@ -196,16 +223,12 @@ function resetGame() {
     player.resetPosition();
     ghosts.forEach(ghost => ghost.resetPosition());
 
-    countdown = 3;
-    let countdownInterval = setInterval(() => {
-        countdown--;
-
-        if (countdown <= 0) {
-            clearInterval(countdownInterval);
-            pause = false;  //paly
-            restarting = false;
-        }
-    }, 1000);
+    setTimeout(() => {
+        pause = false;
+        countdown = 0;
+        restarting = false;
+        gameState = "playing";
+    }, 3000);
 }
 
 function draw() {
@@ -228,7 +251,7 @@ function draw() {
     ctx.fillText("SCORE: " + score, 20, 20);
     ctx.fillText("LIVES: " + player.lives, 1050, 20);
 
-    // Mostrar el contador de reinicio
+    //reinicio
     if (restarting && countdown > 0) {
         ctx.fillStyle = "red";
         ctx.font = "90px Arial";
@@ -242,10 +265,15 @@ function draw() {
     }
 }
 
-
 function gameLoop() {
-    update();
-    draw();
+    if (gameState === "start") {
+        drawStartScreen();
+    } else if (gameState === "playing") {
+        update();
+        draw();
+    } else if (gameState === "gameOver") {
+        drawGameOverScreen();
+    }
     requestAnimationFrame(gameLoop);
 }
 
