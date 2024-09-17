@@ -83,15 +83,13 @@ function create() {
             //comida
             } else if (tile === 2 ) {
                 foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/comida.png'));
-            }
-
+            
             //pastilla
-            else if (tile === 3) {
+            } else if (tile === 3) {
                 foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/player2.png', true));
-            }
-
-            //
-            else if (tile === 4) {
+            
+            //otra cosa
+            } else if (tile === 4) {
                 foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/plato.png', true));
             }
 
@@ -210,6 +208,25 @@ function drawGameOverScreen() {
     ctx.fillText("GAME OVER", canvas.width / 2 - 100, canvas.height / 2 - 50);
     ctx.font = "20px Arial";
     ctx.fillText("Press R to restart", canvas.width / 2 - 90, canvas.height / 2);
+    score = 0;
+    foods = [];
+
+    for (let row = 0; row < map.length; row++) {
+        for (let col = 0; col < map[row].length; col++) {
+            const tile = map[row][col];
+            const x = col * tileSize;
+            const y = row * tileSize;
+            
+            if (tile === 2 ) {
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/comida.png'));
+            
+            //pastilla
+            } else if (tile === 3) {
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/player2.png', true));
+            } 
+
+        }
+    }
 }
 
 function resetGame() {
