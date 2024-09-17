@@ -9,12 +9,12 @@ let gameState = "start";
 const canvas = document.getElementById("my_canvas");
 const ctx = canvas.getContext('2d');
 
-const illuminationRadius = 180; 
-
 const backgroundImage = new Image();
 backgroundImage.src = 'assets/images/mapcopia.png'; 
 
 const tileSize = 32; 
+
+let illuminationRadius = 180; 
 
 let direction = "";
 let score = 0;
@@ -23,7 +23,6 @@ let pause = false;
 
 let countdown = 0;
 let restarting = false;
-
 
 let player = new Player(32, 64, 32, 32, 'assets/images/puckman.png');
 
@@ -64,6 +63,9 @@ document.addEventListener('keydown', function(e) {
     } else if (gameState === "gameOver" && e.keyCode === 82) { //R
         gameState = "playing";
         player.lives = 3;
+        resetGame();
+    }  else if (gameState === "win" && e.keyCode === 82) { //R
+        gameState = "start";
         resetGame();
     }
 });
@@ -137,8 +139,8 @@ function update() {
                 }
 
                 if (totalFoods === 0) {
-                    console.log("ya ganastes");
-                    pause = true; 
+                    console.log("ganastes compadre");
+                    gameState = "win";
                     
                 }
             }
@@ -229,6 +231,18 @@ function drawGameOverScreen() {
     }
 }
 
+function drawWinScreen() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "green";
+    ctx.font = "40px Arial";
+    ctx.fillText("GANASTE", canvas.width / 2 - 80, canvas.height / 2 - 50);
+    ctx.font = "20px Arial";
+    ctx.fillText("Press R to restart", canvas.width / 2 - 90, canvas.height / 2);
+    score = 0;
+    foods = [];
+    create();
+}
+
 function resetGame() {
     pause = true;
     restarting = true;
@@ -261,7 +275,7 @@ function draw() {
         ghost.draw(ctx);
     });
 
-    drawLight();
+    //drawLight();
 
     player.draw(ctx);
     
@@ -292,6 +306,8 @@ function gameLoop() {
         draw();
     } else if (gameState === "gameOver") {
         drawGameOverScreen();
+    } else if (gameState === "win") {
+        drawWinScreen();
     }
     requestAnimationFrame(gameLoop);
 }
