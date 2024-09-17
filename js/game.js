@@ -7,22 +7,20 @@ import { map } from './map.js';
 const canvas = document.getElementById("my_canvas");
 const ctx = canvas.getContext('2d');
 
-const groundImage = new Image();
-groundImage.src = 'assets/images/suelo.png';
-let groundTiles = [];
+const illuminationRadius = 100; 
 
 const backgroundImage = new Image();
-backgroundImage.src = 'assets/images/mapa.png'; 
+backgroundImage.src = 'assets/images/mapaloco.png'; 
 
 const tileSize = 32; 
 
 let direction = "";
 let score = 0;
-let speed = 2;
+let speed = 1;
 let pause = false;
 
 
-let player = new Player(32, 64, 32, 32, 'assets/images/player.png');
+let player = new Player(32, 64, 32, 32, 'assets/images/player4.png');
 
 let walls = [];
 let foods = [];
@@ -61,17 +59,23 @@ function create() {
             const x = col * tileSize;
             const y = row * tileSize;
             
-            if(tile === 0) {
-                groundTiles.push({ x, y });
-            } else if (tile === 1) {
-                //pared
+            
+            //pared
+            if (tile === 1) {
                 walls.push(new Wall(x, y, tileSize, tileSize, 'pink'));
+            
+            //comida
             } else if (tile === 2 ) {
-                //comida
-                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/plato.png'));
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/01.png'));
             }
+
+            //pastilla
             else if (tile === 3) {
-                //pastilla
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/player2.png', true));
+            }
+
+            //
+            else if (tile === 4) {
                 foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/plato.png', true));
             }
 
@@ -136,28 +140,34 @@ function update() {
     }
 }
 
+function drawLight(){
+     // Luego, aplica el efecto de iluminación
+    ctx.globalCompositeOperation = 'destination-over'; // Asegura que el efecto de iluminación esté debajo
+    
+    // Dibuja el fondo oscuro
+    ctx.fillStyle = 'rgba(0, 0, 0, .9)'; // Color oscuro con opacidad
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Dibuja la "luz" alrededor del jugador
+    ctx.globalCompositeOperation = 'destination-in'; // Elimina el área de la máscara
+    ctx.beginPath();
+    ctx.arc(player.x + player.w / 2, player.y + player.h / 2, illuminationRadius, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    ctx.globalCompositeOperation = 'source-over';
+}
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-
-    // groundTiles.forEach(tile => {
-    //     ctx.drawImage(groundImage, tile.x, tile.y, tileSize, tileSize);
-    // });
-
-
-    
-    player.draw(ctx);
-    
-    //walls.forEach(wall => wall.draw(ctx));
     
     foods.forEach(food => food.draw(ctx));
-    
-    // walls.forEach(wall => {
-    //     wall.draw(ctx);
-    //   });
+   
+    //drawLight();
 
+    player.draw(ctx);
+    
     // ghosts.forEach(ghost => {
 
     //     ghost.draw(ctx);
@@ -165,14 +175,13 @@ function draw() {
 
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
-    ctx.fillText("Score: " + score, 20, 20);
+    ctx.fillText("SCORE: " + score, 20, 20);
 
     if (pause) {
         ctx.fillStyle = "white";
         ctx.font = "40px Arial";
         ctx.fillText("PAUSE", canvas.width / 2 - 60, canvas.height / 2);
     }
-
 }
 
 
