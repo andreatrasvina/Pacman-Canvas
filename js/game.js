@@ -24,6 +24,9 @@ let pause = false;
 let countdown = 0;
 let restarting = false;
 
+let startTime = 0; 
+let elapsedTime = 0; 
+
 let player = new Player(32, 64, 32, 32, 'assets/images/puckman.png');
 
 let walls = [];
@@ -56,19 +59,63 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
+
 document.addEventListener('keydown', function(e) {
     if (gameState === "start" && e.keyCode === 13) { //ENTER
         gameState = "playing";
-        resetGame();  
+        startNewGame();  
     } else if (gameState === "gameOver" && e.keyCode === 82) { //R
         gameState = "playing";
         player.lives = 3;
         resetGame();
     }  else if (gameState === "win" && e.keyCode === 82) { //R
         gameState = "start";
-        resetGame();
+        startNewGame(); 
     }
 });
+
+function startNewGame() {
+    startTime = Date.now();  // Reinicia el temporizador
+    elapsedTime = 0;
+
+    gameState = "playing";
+    score = 0;
+    foods = [];
+    create();  // Reinicia los objetos en el juego
+
+    player.resetPosition();
+    ghosts.forEach(ghost => ghost.resetPosition());
+
+    let countdownInterval = setInterval(() => {
+        countdown--;
+
+        //reanudar el juego
+        if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            pause = false;
+            restarting = false;
+            gameState = "playing";
+        }
+    }, 1000);
+}
+
+function updateTimer() {
+    if (gameState === "playing") {
+        elapsedTime = Date.now() - startTime;
+    }
+}
+
+function drawTimer() {
+    const totalSeconds = Math.floor(elapsedTime / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    const timeString = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("TIME: " + timeString, canvas.width / 2 - 50, 20);
+}
 
 function create() {
     for (let row = 0; row < map.length; row++) {
@@ -76,7 +123,6 @@ function create() {
             const tile = map[row][col];
             const x = col * tileSize;
             const y = row * tileSize;
-            
             
             //pared
             if (tile === 1) {
@@ -160,6 +206,8 @@ function update() {
                 }
             }
         });
+
+        updateTimer();
     }
 }
 
@@ -283,6 +331,8 @@ function draw() {
     ctx.font = "20px Arial";
     ctx.fillText("SCORE: " + score, 20, 20);
     ctx.fillText("LIVES: " + player.lives, 1050, 20);
+
+    drawTimer();
 
     //reinicio
     if (restarting && countdown > 0) {
