@@ -14,7 +14,7 @@ backgroundImage.src = 'assets/images/mapcopia.png';
 
 const tileSize = 32; 
 
-let illuminationRadius = 180; 
+let illuminationRadius=100; 
 
 let direction = "";
 let score = 0;
@@ -75,28 +75,16 @@ document.addEventListener('keydown', function(e) {
 });
 
 function startNewGame() {
-    startTime = Date.now();  // Reinicia el temporizador
+    startTime = Date.now();  
     elapsedTime = 0;
 
     gameState = "playing";
     score = 0;
     foods = [];
-    create();  // Reinicia los objetos en el juego
+    create(); 
 
     player.resetPosition();
     ghosts.forEach(ghost => ghost.resetPosition());
-
-    let countdownInterval = setInterval(() => {
-        countdown--;
-
-        //reanudar el juego
-        if (countdown <= 0) {
-            clearInterval(countdownInterval);
-            pause = false;
-            restarting = false;
-            gameState = "playing";
-        }
-    }, 1000);
 }
 
 function updateTimer() {
@@ -124,21 +112,18 @@ function create() {
             const x = col * tileSize;
             const y = row * tileSize;
             
-            //pared
             if (tile === 1) {
                 walls.push(new Wall(x, y, tileSize, tileSize, 'pink'));
-            
-            //comida
-            } else if (tile === 2 ) {
+            } else if (tile === 2) {
                 foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/comida.png'));
-            
-            //pastilla
             } else if (tile === 3) {
-                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/player2.png', true));
-            
-            //otra cosa
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/pastilla.png', true, 'extraLight'));
             } else if (tile === 4) {
-                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/plato.png', true));
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/pastilla.png', true, 'extraLife'));
+            } else if (tile === 5) {
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/pastilla.png', true, 'slowGhosts'));
+            } else if (tile === 6) {
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/pastilla.png', true, 'superLight'));
             }
 
         }
@@ -181,7 +166,20 @@ function update() {
                 foods.splice(index, 1); 
 
                 if (food.isPill) {
-                    food.effect(player);
+                    switch (food.effectType) {
+                        case 'extraLight':
+                            illuminationRadius = 160;
+                            break;
+                        case 'extraLife':
+                            player.lives++;
+                            break;
+                        case 'slowGhosts':
+                            ghosts.forEach(ghost => ghost.speed = 1);
+                            break;
+                        case 'superLight':
+                            illuminationRadius = 320;
+                            break;
+                    }
                 }
 
                 if (totalFoods === 0) {
@@ -227,7 +225,7 @@ function drawLight() {
         0,                       
         player.x + player.w / 2, 
         player.y + player.h / 2, 
-        illuminationRadius       
+        illuminationRadius    
     );
     
     //colores gradiente 
@@ -267,13 +265,19 @@ function drawGameOverScreen() {
             const x = col * tileSize;
             const y = row * tileSize;
             
-            if (tile === 2 ) {
+            if (tile === 1) {
+                walls.push(new Wall(x, y, tileSize, tileSize, 'pink'));
+            } else if (tile === 2) {
                 foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/comida.png'));
-            
-            //pastilla
             } else if (tile === 3) {
-                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/player2.png', true));
-            } 
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/pastilla.png', true));
+            } else if (tile === 4) {
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/pastilla.png', true));
+            } else if (tile === 5) {
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/pastilla.png', true));
+            } else if (tile === 6) {
+                foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/pastilla.png', true));
+            }
 
         }
     }
@@ -323,7 +327,7 @@ function draw() {
         ghost.draw(ctx);
     });
 
-    //drawLight();
+    drawLight();
 
     player.draw(ctx);
     
