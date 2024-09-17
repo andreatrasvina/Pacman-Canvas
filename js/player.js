@@ -7,6 +7,15 @@ class Player {
         this.image = new Image();
         this.image.src = imgSrc;
         this.lives = 3;
+
+        this.initialX = x;
+        this.initialY = y;
+    }
+
+    resetPosition() {
+        this.x = this.initialX;
+        this.y = this.initialY;
+    
     }
 
     move(direction, speed, canvas) {

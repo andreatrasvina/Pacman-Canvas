@@ -9,6 +9,15 @@ class Ghost {
         this.speed = 2;
         this.direction = this.getRandomDirection();
         this.name = name;
+
+        this.initialX = x;
+        this.initialY = y;
+    }
+
+    resetPosition() {
+        this.x = this.initialX;
+        this.y = this.initialY;
+    
     }
 
     getRandomDirection() {

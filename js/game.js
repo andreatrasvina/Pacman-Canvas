@@ -19,6 +19,9 @@ let score = 0;
 let speed = 1;
 let pause = false;
 
+let countdown = 0;
+let restarting = false;
+
 
 let player = new Player(32, 64, 32, 32, 'assets/images/player4.png');
 
@@ -142,6 +145,13 @@ function update() {
             if (player.colision(ghost)) {
                 player.loseLife();
                 console.log(`Vidas restantes: ${player.lives}`);
+
+                if (player.lives > 0) {
+                    resetGame(); 
+                } else {
+                    console.log("Game Over");
+                    // Lógica para terminar el juego
+                }
             }
         });
 
@@ -179,6 +189,25 @@ function drawLight() {
     ctx.globalCompositeOperation = 'source-over'; 
 }
 
+function resetGame() {
+    pause = true;
+    restarting = true;
+
+    player.resetPosition();
+    ghosts.forEach(ghost => ghost.resetPosition());
+
+    countdown = 3;
+    let countdownInterval = setInterval(() => {
+        countdown--;
+
+        if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            pause = false;  //paly
+            restarting = false;
+        }
+    }, 1000);
+}
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -190,16 +219,23 @@ function draw() {
         ghost.draw(ctx);
     });
 
-    //drawLight();
+    drawLight();
 
     player.draw(ctx);
+    
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
     ctx.fillText("SCORE: " + score, 20, 20);
+    ctx.fillText("LIVES: " + player.lives, 1050, 20);
 
-    ctx.fillText("LIVES: " + player.lives, 1070, 20);
+    // Mostrar el contador de reinicio
+    if (restarting && countdown > 0) {
+        ctx.fillStyle = "red";
+        ctx.font = "90px Arial";
+        ctx.fillText(countdown, canvas.width / 2 - 10, canvas.height / 2);
+    }
 
-    if (pause) {
+    if (pause && !restarting) {
         ctx.fillStyle = "white";
         ctx.font = "40px Arial";
         ctx.fillText("PAUSE", canvas.width / 2 - 60, canvas.height / 2);
