@@ -57,6 +57,17 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
+document.addEventListener('keydown', function(e) {
+    if (gameState === "start" && e.keyCode === 13) { //ENTER
+        gameState = "playing";
+        resetGame();  
+    } else if (gameState === "gameOver" && e.keyCode === 82) { //R
+        gameState = "playing";
+        player.lives = 3;
+        resetGame();
+    }
+});
+
 function create() {
     for (let row = 0; row < map.length; row++) {
         for (let col = 0; col < map[row].length; col++) {
@@ -129,7 +140,7 @@ function update() {
 
                 if (totalFoods === 0) {
                     console.log("ya ganastes");
-                    pause = true; // Pausar el juego al ganar
+                    pause = true; 
                     
                 }
             }
@@ -192,13 +203,6 @@ function drawStartScreen() {
     ctx.fillText("Press ENTER to start", canvas.width / 2 - 90, canvas.height / 2);
 }
 
-document.addEventListener('keydown', function(e) {
-    if (gameState === "start" && e.keyCode === 13) { //ENTER
-        gameState = "playing";
-        resetGame(); 
-    }
-});
-
 function drawGameOverScreen() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "red";
@@ -208,27 +212,25 @@ function drawGameOverScreen() {
     ctx.fillText("Press R to restart", canvas.width / 2 - 90, canvas.height / 2);
 }
 
-document.addEventListener('keydown', function(e) {
-    if (gameState === "gameOver" && e.keyCode === 82) { //R
-        gameState = "playing";
-        player.lives = 3;
-        resetGame();
-    }
-});
-
 function resetGame() {
     pause = true;
     restarting = true;
+    countdown = 3;
 
     player.resetPosition();
     ghosts.forEach(ghost => ghost.resetPosition());
 
-    setTimeout(() => {
-        pause = false;
-        countdown = 0;
-        restarting = false;
-        gameState = "playing";
-    }, 3000);
+    let countdownInterval = setInterval(() => {
+        countdown--;
+
+        //reanudar el juego
+        if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            pause = false;
+            restarting = false;
+            gameState = "playing";
+        }
+    }, 1000);
 }
 
 function draw() {
