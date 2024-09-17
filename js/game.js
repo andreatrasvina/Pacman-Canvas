@@ -26,8 +26,10 @@ let walls = [];
 let foods = [];
 
 let ghosts = [
-    new Ghost(100, 100, 40, 40, 'green'),
-    new Ghost(400, 400, 40, 40, 'yellow')
+    new Ghost(580, 400, 32, 32, 'assets/images/player4.png'),
+    new Ghost(32, 700, 32, 32, 'assets/images/player4.png'),
+    new Ghost(1000, 610, 32, 32, 'assets/images/player4.png'),
+    new Ghost(1000, 64, 32, 32, 'assets/images/player4.png')
 ];
 
 
@@ -124,7 +126,9 @@ function update() {
 
                 if (totalFoods === 0) {
                     console.log("ya ganastes");
-                    //aqui pondre algo para finalizar el juego
+                    pause = true; // Pausar el juego al ganar
+                    
+                
                 }
 
             }
@@ -132,43 +136,49 @@ function update() {
             
         });
 
-        // ghosts.forEach(ghost => {
-        //     ghost.move();
-            
-        // });
+        // Movimiento de los fantasmas
+        ghosts.forEach(ghost => {
+            ghost.move(walls);
+
+            // Comprobar colisión entre el jugador y los fantasmas
+            if (ghost.colision(player)) {
+                console.log("¡Has sido atrapado por un fantasma!");
+                pause = true; // Pausar el juego o implementar un sistema de vidas
+            }
+        });
 
     }
 }
 
 function drawLight() {
-    ctx.globalCompositeOperation = 'destination-over'; // iluminación debajo
+    ctx.globalCompositeOperation = 'destination-over';//iluminación debajo
     
-    // Fondo oscuro
+    //fondo oscuro
     ctx.fillStyle = 'rgba(0, 0, 0, .7)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Luz difuminada alrededor del jugador
-    ctx.globalCompositeOperation = 'destination-in';
+    ctx.globalCompositeOperation = 'destination-in'; //luz alrededor del jugador
     
+    //config del gradiente !!!asi esta bien!!!
     const gradient = ctx.createRadialGradient(
-        player.x + player.w / 2, // Posición x del centro del gradiente
-        player.y + player.h / 2, // Posición y del centro del gradiente
-        0,                       // Radio inicial del gradiente (centro)
-        player.x + player.w / 2, // Posición x del borde externo del gradiente
-        player.y + player.h / 2, // Posición y del borde externo del gradiente
-        illuminationRadius       // Radio máximo del gradiente (borde difuminado)
+        player.x + player.w / 2, 
+        player.y + player.h / 2, 
+        0,                       
+        player.x + player.w / 2, 
+        player.y + player.h / 2, 
+        illuminationRadius       
     );
     
-    // Añade los colores para el gradiente (difuminado de blanco a transparente)
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');  // Centro del círculo blanco
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');  // Borde del círculo transparente
+    //colores gradiente 
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)'); 
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); 
 
     ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.arc(player.x + player.w / 2, player.y + player.h / 2, illuminationRadius, 0, 2 * Math.PI);
     ctx.fill();
     
-    ctx.globalCompositeOperation = 'source-over'; // Restaura la composición normal
+    ctx.globalCompositeOperation = 'source-over'; 
 }
 
 function draw() {
@@ -180,12 +190,12 @@ function draw() {
    
     
     
-    // ghosts.forEach(ghost => {
+    // Dibujar fantasmas
+    ghosts.forEach(ghost => {
+        ghost.draw(ctx);
+    });
 
-    //     ghost.draw(ctx);
-    // });
-
-    drawLight();
+    //drawLight();
 
     player.draw(ctx);
     ctx.fillStyle = "white";
