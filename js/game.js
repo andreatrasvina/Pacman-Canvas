@@ -7,15 +7,22 @@ import { map } from './map.js';
 const canvas = document.getElementById("my_canvas");
 const ctx = canvas.getContext('2d');
 
+const groundImage = new Image();
+groundImage.src = 'assets/images/suelo.png';
+let groundTiles = [];
+
+const backgroundImage = new Image();
+backgroundImage.src = 'assets/images/mapa.png'; 
+
 const tileSize = 32; 
 
 let direction = "";
 let score = 0;
-let speed = 1;
+let speed = 2;
 let pause = false;
 
 
-let player = new Player(250, 250, 32, 32, 'assets/images/esponga.png');
+let player = new Player(32, 64, 32, 32, 'assets/images/player.png');
 
 let walls = [];
 let foods = [];
@@ -54,10 +61,12 @@ function create() {
             const x = col * tileSize;
             const y = row * tileSize;
             
-            if (tile === 1) {
+            if(tile === 0) {
+                groundTiles.push({ x, y });
+            } else if (tile === 1) {
                 //pared
                 walls.push(new Wall(x, y, tileSize, tileSize, 'pink'));
-            } else if (tile === 2) {
+            } else if (tile === 2 ) {
                 //comida
                 foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/plato.png'));
             }
@@ -65,6 +74,7 @@ function create() {
                 //pastilla
                 foods.push(new Food(x, y, tileSize, tileSize, 'assets/images/plato.png', true));
             }
+
         }
     }
 }
@@ -118,9 +128,6 @@ function update() {
             
         });
 
-        
-
-        
         // ghosts.forEach(ghost => {
         //     ghost.move();
             
@@ -132,10 +139,18 @@ function update() {
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+    // groundTiles.forEach(tile => {
+    //     ctx.drawImage(groundImage, tile.x, tile.y, tileSize, tileSize);
+    // });
+
+
     
     player.draw(ctx);
     
-    walls.forEach(wall => wall.draw(ctx));
+    //walls.forEach(wall => wall.draw(ctx));
     
     foods.forEach(food => food.draw(ctx));
     

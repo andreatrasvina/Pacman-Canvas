@@ -4,11 +4,11 @@ body {
     align-items: center;
     height: 100vh; 
     margin: 0;
-    background-color: black; 
+    background-color: rgba(24,21,38,255); 
 }
 
 canvas {
-    background-color: gray;
+    background-color: black;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); 
-    border-radius: 10px;
+    border-radius: 5px;
 }
