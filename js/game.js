@@ -96,16 +96,21 @@ document.addEventListener('keydown', function(e) {
 });
 
 function startNewGame() {
-    startTime = Date.now();  
+    startTime = Date.now(); 
     elapsedTime = 0;
 
     gameState = "playing";
     score = 0;
+    speed = 1;
+    illuminationRadius = 100; 
     foods = [];
     create(); 
 
     player.resetPosition();
-    ghosts.forEach(ghost => ghost.resetPosition());
+    ghosts.forEach(ghost => {
+        ghost.resetPosition();
+        ghost.speed = 2; 
+    });
 }
 
 function updateTimer() {
@@ -122,8 +127,8 @@ function drawTimer() {
     const timeString = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
     ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
-    ctx.fillText("TIME: " + timeString, canvas.width / 2 - 50, 20);
+    ctx.font = "30px Arial";
+    ctx.fillText("TIME: " + timeString, 590, 30);
 }
 
 function create() {
@@ -281,19 +286,32 @@ function drawLight() {
 }
 
 function drawStartScreen() {
-
+    
     creepySound.pause();
 
     elevador.play();
     elevador.volume = 0.4;
 
-
+    // Limpiar el lienzo
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     ctx.fillStyle = "white";
-    ctx.font = "40px Arial";
-    ctx.fillText("PACMAN'S NEXTBOTS", 380, canvas.height / 2 - 50);
+    ctx.font = "50px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("PACMAN'S NEXTBOTS", canvas.width / 2, canvas.height / 2 - 80);
+
+    ctx.font = "30px Arial";
+    ctx.fillText("Presiona ENTER para empezar", canvas.width / 2, canvas.height / 2);
+
     ctx.font = "20px Arial";
-    ctx.fillText("Press ENTER to start", canvas.width / 2 - 90, canvas.height / 2);
+    ctx.fillText("Controles:", canvas.width / 2, canvas.height / 2 + 40);
+    
+    ctx.font = "18px Arial";
+    ctx.fillText("AWSD - Movimiento", canvas.width / 2, canvas.height / 2 + 70);
+    ctx.fillText("SPACE - Pausa", canvas.width / 2, canvas.height / 2 + 100);
+
+    ctx.font = "16px Arial";
+    ctx.fillText("¡Come toda la comida para ganar! Solo tienes 3 vidas...", canvas.width / 2, canvas.height / 2 + 140);
 }
 
 function drawGameOverScreen() {
@@ -308,7 +326,7 @@ function drawGameOverScreen() {
     ctx.font = "40px Arial";
     ctx.fillText("GAME OVER", canvas.width / 2 - 100, canvas.height / 2 - 50);
     ctx.font = "20px Arial";
-    ctx.fillText("Press R to restart", canvas.width / 2 - 90, canvas.height / 2);
+    ctx.fillText("Presiona R para reanudar", 590, canvas.height / 2);
     score = 0;
     foods = [];
 
@@ -348,7 +366,7 @@ function drawWinScreen() {
     ctx.font = "40px Arial";
     ctx.fillText("GANASTE", canvas.width / 2 - 80, canvas.height / 2 - 50);
     ctx.font = "20px Arial";
-    ctx.fillText("Press R to restart", canvas.width / 2 - 90, canvas.height / 2);
+    ctx.fillText("Presiona R para jugar de nuevo", 590, canvas.height / 2);
     score = 0;
     foods = [];
     create();
@@ -359,8 +377,15 @@ function resetGame() {
     restarting = true;
     countdown = 3;
 
+    speed = 1;
+    illuminationRadius = 100;
+    elapsedTime = 0;
+
     player.resetPosition();
-    ghosts.forEach(ghost => ghost.resetPosition());
+    ghosts.forEach(ghost => {
+        ghost.resetPosition();
+        ghost.speed = 2; 
+    });
 
     let countdownInterval = setInterval(() => {
         countdown--;
@@ -395,8 +420,8 @@ function draw() {
     
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
-    ctx.fillText("SCORE: " + score, 20, 20);
-    ctx.fillText("LIVES: " + player.lives, 1050, 20);
+    ctx.fillText("SCORE: " + score, 70, 20);
+    ctx.fillText("LIVES: " + player.lives, 1100, 20);
 
     drawTimer();
 
@@ -410,7 +435,7 @@ function draw() {
     if (pause && !restarting) {        
         ctx.fillStyle = "white";
         ctx.font = "40px Arial";
-        ctx.fillText("PAUSE", canvas.width / 2 - 60, canvas.height / 2);
+        ctx.fillText("PAUSE", 590, canvas.height / 2);
     }
 
     if(!pause){
