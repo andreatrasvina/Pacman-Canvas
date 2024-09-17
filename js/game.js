@@ -10,7 +10,7 @@ const ctx = canvas.getContext('2d');
 const illuminationRadius = 180; 
 
 const backgroundImage = new Image();
-backgroundImage.src = 'assets/images/map.png'; 
+backgroundImage.src = 'assets/images/mapcopia.png'; 
 
 const tileSize = 32; 
 
@@ -26,10 +26,10 @@ let walls = [];
 let foods = [];
 
 let ghosts = [
-    new Ghost(580, 400, 32, 32, 'assets/images/player4.png'),
-    new Ghost(32, 700, 32, 32, 'assets/images/player4.png'),
-    new Ghost(1000, 610, 32, 32, 'assets/images/player4.png'),
-    new Ghost(1000, 64, 32, 32, 'assets/images/player4.png')
+    new Ghost(580, 382 , 64, 64, 'assets/images/selene_delgado.png', "Selene Delgado"),
+    new Ghost(96, 610, 64, 64, 'assets/images/obunga.png', "Obunga"),
+    new Ghost(1000, 610, 32, 32, 'assets/images/aheno.png', "Aheno"),
+    new Ghost(1000, 64, 32, 32, 'assets/images/firebrand.png', "Firebrand")
 ];
 
 
@@ -136,14 +136,12 @@ function update() {
             
         });
 
-        // Movimiento de los fantasmas
         ghosts.forEach(ghost => {
             ghost.move(walls);
 
-            // Comprobar colisión entre el jugador y los fantasmas
-            if (ghost.colision(player)) {
-                console.log("¡Has sido atrapado por un fantasma!");
-                pause = true; // Pausar el juego o implementar un sistema de vidas
+            if (player.colision(ghost)) {
+                player.loseLife();
+                console.log(`Vidas restantes: ${player.lives}`);
             }
         });
 
@@ -188,9 +186,6 @@ function draw() {
     
     foods.forEach(food => food.draw(ctx));
    
-    
-    
-    // Dibujar fantasmas
     ghosts.forEach(ghost => {
         ghost.draw(ctx);
     });
@@ -201,6 +196,8 @@ function draw() {
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
     ctx.fillText("SCORE: " + score, 20, 20);
+
+    ctx.fillText("LIVES: " + player.lives, 1070, 20);
 
     if (pause) {
         ctx.fillStyle = "white";

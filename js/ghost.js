@@ -1,13 +1,14 @@
 class Ghost {
-    constructor(x, y, w, h, imgSrc) {
+    constructor(x, y, w, h, imgSrc, name) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.image = new Image();
         this.image.src = imgSrc;
-        this.speed = 2; // Velocidad de movimiento
+        this.speed = 2;
         this.direction = this.getRandomDirection();
+        this.name = name;
     }
 
     getRandomDirection() {
@@ -19,7 +20,6 @@ class Ghost {
         let oldX = this.x;
         let oldY = this.y;
 
-        // Mover fantasma en la dirección actual
         switch (this.direction) {
             case "up":
                 this.y -= this.speed;
@@ -35,17 +35,15 @@ class Ghost {
                 break;
         }
 
-        // Verificar colisión con las paredes
-        let collided = walls.some(wall => this.colision(wall));
+        let colision = walls.some(wall => this.colision(wall));
 
-        // Si colisiona, revertir el movimiento y cambiar de dirección
-        if (collided) {
+        if (colision) {
             this.x = oldX;
             this.y = oldY;
             this.direction = this.getRandomDirection();
         }
 
-        // Cambiar dirección aleatoriamente después de moverse un poco
+        //cada cuanto se actualiza el movimiento
         if (Math.random() < 0.02) {
             this.direction = this.getRandomDirection();
         }
@@ -55,13 +53,12 @@ class Ghost {
         ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
     }
 
-    // Colisión con cualquier objeto (pared o jugador)
-    colision(entity) {
+    colision(obj) {
         return (
-            this.x < entity.x + entity.w &&
-            this.x + this.w > entity.x &&
-            this.y < entity.y + entity.h &&
-            this.y + this.h > entity.y
+            this.x < obj.x + obj.w &&
+            this.x + this.w > obj.x &&
+            this.y < obj.y + obj.h &&
+            this.y + this.h > obj.y
         );
     }
 }

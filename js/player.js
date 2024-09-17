@@ -6,6 +6,7 @@ class Player {
         this.h = h;
         this.image = new Image();
         this.image.src = imgSrc;
+        this.lives = 3;
     }
 
     move(direction, speed, canvas) {
@@ -26,6 +27,14 @@ class Player {
                 this.y += speed;
                 if (this.y > canvas.height) this.y = 0;
                 break;
+        }
+    }
+
+    loseLife() {
+        this.lives--;
+        if (this.lives <= 0) {
+            console.log("Game Over");
+            //terminar el juego o reiniciarlo
         }
     }
 
