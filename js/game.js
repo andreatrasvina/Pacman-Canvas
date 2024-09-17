@@ -88,12 +88,14 @@ document.addEventListener('keydown', function(e) {
     } else if (gameState === "gameOver" && e.keyCode === 82) { //R
         gameState = "playing";
         player.lives = 3;
-        resetGame();
+        location.reload(); 
+        //resetGame();
     }  else if (gameState === "win" && e.keyCode === 82) { //R
         gameState = "start";
-        startNewGame(); 
+        location.reload(); 
     }
 });
+
 
 function startNewGame() {
     startTime = Date.now(); 
