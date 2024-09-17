@@ -14,6 +14,27 @@ backgroundImage.src = 'assets/images/mapcopia.png';
 
 const tileSize = 32; 
 
+const eatFood = new Audio('assets/sounds/eat_food.mp3');
+const eatPill = new Audio('assets/sounds/eat_pill.mp3');
+const pedoAguado = new Audio('assets/sounds/pedo_aguado.mp3');
+const perdiste = new Audio('assets/sounds/perdiste.mp3');
+const gratula = new Audio('assets/sounds/gratula.mp3');
+const elevador = new Audio('assets/sounds/elevador.mp3');
+const creepySound = new Audio('assets/sounds/creepy_sound.mp3');
+const respawn = new Audio('assets/sounds/respawn.mp3');
+
+const seleneDelgado = new Audio('assets/sounds/selene_delgado.mp3');
+const obunga = new Audio('assets/sounds/obunga.mp3');
+const aheno = new Audio('assets/sounds/aheno.mp3');
+const firebrand = new Audio('assets/sounds/firebrand.mp3');
+
+const ghostSounds = {
+    "Selene Delgado": seleneDelgado,
+    "Obunga": obunga,
+    "Aheno": aheno,
+    "Firebrand": firebrand
+};
+
 let illuminationRadius=100; 
 
 let direction = "";
@@ -33,8 +54,8 @@ let walls = [];
 let foods = [];
 
 let ghosts = [
-    new Ghost(580, 382 , 64, 64, 'assets/images/selene_delgado.png', "Selene Delgado"),
-    new Ghost(96, 610, 64, 64, 'assets/images/obunga.png', "Obunga"),
+    new Ghost(650, 382 , 64, 64, 'assets/images/selene_delgado.png', "Selene Delgado"),
+    new Ghost(140, 610, 64, 64, 'assets/images/obunga.png', "Obunga"),
     new Ghost(1000, 610, 32, 32, 'assets/images/aheno.png', "Aheno"),
     new Ghost(1000, 64, 32, 32, 'assets/images/firebrand.png', "Firebrand")
 ];
@@ -160,12 +181,18 @@ function update() {
 
             if (player.colision(food)) {
 
+                eatFood.play();
+                eatFood.volume = 0.7;
+
                 score++;
                 totalFoods--; 
 
                 foods.splice(index, 1); 
 
                 if (food.isPill) {
+
+                    eatPill.play();
+                    eatPill.volume = 0.7;
                     switch (food.effectType) {
                         case 'extraLight':
                             illuminationRadius = 160;
@@ -194,13 +221,26 @@ function update() {
             ghost.move(walls);
 
             if (player.colision(ghost)) {
+                
+                const sound = ghostSounds[ghost.name];
+                if (sound) {
+                    if (sound.paused || sound.ended) {
+                        sound.play();
+                        sound.volume = 0.6;
+                    }
+                }
+
                 player.loseLife();
                 console.log(`Vidas restantes: ${player.lives}`);
 
                 if (player.lives > 0) {
+                    respawn.play();
+                    respawn.volume = 0.5;
                     resetGame();
                 } else {
                     gameState = "gameOver";
+                    pedoAguado.play();
+                    pedoAguado.volume = 0.7;
                 }
             }
         });
@@ -241,6 +281,13 @@ function drawLight() {
 }
 
 function drawStartScreen() {
+
+    creepySound.pause();
+
+    elevador.play();
+    elevador.volume = 0.4;
+
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "white";
     ctx.font = "40px Arial";
@@ -250,6 +297,12 @@ function drawStartScreen() {
 }
 
 function drawGameOverScreen() {
+
+    creepySound.pause();
+
+    perdiste.play();
+    perdiste.volume = 0.5;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "red";
     ctx.font = "40px Arial";
@@ -284,6 +337,12 @@ function drawGameOverScreen() {
 }
 
 function drawWinScreen() {
+
+    creepySound.pause();
+
+    gratula.play();
+    gratula.volume = 0.5;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "green";
     ctx.font = "40px Arial";
@@ -317,6 +376,9 @@ function resetGame() {
 }
 
 function draw() {
+
+    elevador.pause();
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
@@ -345,11 +407,17 @@ function draw() {
         ctx.fillText(countdown, canvas.width / 2 - 10, canvas.height / 2);
     }
 
-    if (pause && !restarting) {
+    if (pause && !restarting) {        
         ctx.fillStyle = "white";
         ctx.font = "40px Arial";
         ctx.fillText("PAUSE", canvas.width / 2 - 60, canvas.height / 2);
     }
+
+    if(!pause){
+        creepySound.play();
+        creepySound.volume = 0.4;
+    }
+
 }
 
 function gameLoop() {
