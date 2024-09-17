@@ -7,10 +7,10 @@ import { map } from './map.js';
 const canvas = document.getElementById("my_canvas");
 const ctx = canvas.getContext('2d');
 
-const illuminationRadius = 100; 
+const illuminationRadius = 180; 
 
 const backgroundImage = new Image();
-backgroundImage.src = 'assets/images/mapaloco.png'; 
+backgroundImage.src = 'assets/images/map.png'; 
 
 const tileSize = 32; 
 
@@ -140,21 +140,35 @@ function update() {
     }
 }
 
-function drawLight(){
-     // Luego, aplica el efecto de iluminación
-    ctx.globalCompositeOperation = 'destination-over'; // Asegura que el efecto de iluminación esté debajo
+function drawLight() {
+    ctx.globalCompositeOperation = 'destination-over'; // iluminación debajo
     
-    // Dibuja el fondo oscuro
-    ctx.fillStyle = 'rgba(0, 0, 0, .9)'; // Color oscuro con opacidad
+    // Fondo oscuro
+    ctx.fillStyle = 'rgba(0, 0, 0, .7)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Dibuja la "luz" alrededor del jugador
-    ctx.globalCompositeOperation = 'destination-in'; // Elimina el área de la máscara
+    // Luz difuminada alrededor del jugador
+    ctx.globalCompositeOperation = 'destination-in';
+    
+    const gradient = ctx.createRadialGradient(
+        player.x + player.w / 2, // Posición x del centro del gradiente
+        player.y + player.h / 2, // Posición y del centro del gradiente
+        0,                       // Radio inicial del gradiente (centro)
+        player.x + player.w / 2, // Posición x del borde externo del gradiente
+        player.y + player.h / 2, // Posición y del borde externo del gradiente
+        illuminationRadius       // Radio máximo del gradiente (borde difuminado)
+    );
+    
+    // Añade los colores para el gradiente (difuminado de blanco a transparente)
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');  // Centro del círculo blanco
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');  // Borde del círculo transparente
+
+    ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.arc(player.x + player.w / 2, player.y + player.h / 2, illuminationRadius, 0, 2 * Math.PI);
     ctx.fill();
     
-    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalCompositeOperation = 'source-over'; // Restaura la composición normal
 }
 
 function draw() {
@@ -164,15 +178,16 @@ function draw() {
     
     foods.forEach(food => food.draw(ctx));
    
-    //drawLight();
-
-    player.draw(ctx);
+    
     
     // ghosts.forEach(ghost => {
 
     //     ghost.draw(ctx);
     // });
 
+    drawLight();
+
+    player.draw(ctx);
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
     ctx.fillText("SCORE: " + score, 20, 20);
